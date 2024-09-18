@@ -43,6 +43,8 @@ install_ss() {
           wrong_para_prompt "端口号输入格式错误，请输入1到65535"
           exit 1
         fi
+
+        encrypt=${3:-aes-256-gcm}
         check_os
         check_dependency
         download_files
@@ -50,7 +52,7 @@ install_ss() {
         if [ $? -eq 0 ]; then
                 ssserver -c /etc/shadowsocks.json -d stop
         fi
-        generate_config $password $port
+        generate_config $password $port $encrypt
         if [ ${os} == 'centos' ]
         then
                 firewall_set
@@ -338,7 +340,7 @@ generate_config() {
     "local_port":1080,
     "password":"$1",
     "timeout":300,
-    "method":"aes-256-cfb",
+    "method":"$3",
     "fast_open":false
 }
 EOF
